@@ -9,6 +9,12 @@
 ### 3. Silent API Failures - FIXED
 - **Fix**: Added `try-catch` blocks and Toast notifications in `App.tsx` for template saving and project generation.
 
+### 4. AI Configuration Persistence - FIXED
+- **Fix**: Updated `AIModal.tsx` to use environment variables (`.env`) for OpenAI API keys and Ollama model names as defaults.
+
+### 5. Backend Dependency Management - IMPROVED
+- **Fix**: Migrated backend documentation to use `uv` for faster and more reliable environment synchronization.
+
 ## Remaining Issues
 
 ### 1. Basic File Creation Logic
@@ -21,6 +27,6 @@
 - **Description**: Initial data fetching (tags, templates) has no visual loading indicator.
 
 ## Recommendations
-- Implement a real native folder picker in the backend using `tkinter`.
-- Add a global Toast notification system in the frontend for API errors.
-- Improve the `run_local.ps1` script to cleanup stale processes on ports 3000 and 5173.
+- Implement content support in the scaffold generator (instead of just empty files).
+- Add a global Toast notification system in the frontend for all API errors.
+- Consider adding a "Health Check" indicator for Ollama status in the UI.
