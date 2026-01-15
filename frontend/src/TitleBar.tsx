@@ -1,6 +1,11 @@
-import { Flame } from 'lucide-react';
+import { Flame, Sparkles } from 'lucide-react';
 
-export default function TitleBar() {
+interface Props {
+  mode: 'manual' | 'ai';
+  onModeChange: (mode: 'manual' | 'ai') => void;
+}
+
+export default function TitleBar({ mode, onModeChange }: Props) {
   return (
     <div className="title-bar">
       <div className="title-bar-content">
@@ -8,10 +13,18 @@ export default function TitleBar() {
         <span className="title-text">Boil-it UI</span>
       </div>
       <div className="title-bar-mode">
-        <button className="mode-btn active">Manual</button>
-        <button className="mode-btn disabled" disabled>
+        <button
+          className={`mode-btn ${mode === 'manual' ? 'active' : ''}`}
+          onClick={() => onModeChange('manual')}
+        >
+          Manual
+        </button>
+        <button
+          className={`mode-btn ${mode === 'ai' ? 'active' : ''}`}
+          onClick={() => onModeChange('ai')}
+        >
+          <Sparkles size={14} style={{ marginRight: '4px' }} />
           AI
-          <span className="badge">Coming Soon</span>
         </button>
       </div>
     </div>

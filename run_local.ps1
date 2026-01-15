@@ -13,6 +13,19 @@ Write-Host ""
 Write-Host "Starting Boil It (Local Mode)"
 Write-Host ""
 
+# Cleanup existing processes
+Write-Host "Cleaning up old processes..."
+try {
+    Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue | ForEach-Object { 
+        Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue 
+    }
+    Get-NetTCPConnection -LocalPort 5173 -ErrorAction SilentlyContinue | ForEach-Object { 
+        Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue 
+    }
+} catch {}
+Write-Host "Cleanup complete."
+Write-Host ""
+
 # -------- Backend --------
 Write-Host "Starting backend..."
 Start-Process powershell `

@@ -35,7 +35,22 @@ router = APIRouter()
 
 @router.post("/select")
 def select():
-    return {"path": "/mock/path"}
+    try:
+        import tkinter as tk
+        from tkinter import filedialog
+        
+        root = tk.Tk()
+        root.withdraw()  # Hide the main tkinter window
+        root.attributes("-topmost", True)  # Bring to front
+        
+        selected_path = filedialog.askdirectory()
+        root.destroy()
+        
+        if selected_path:
+            return {"path": selected_path}
+        return {"path": None}
+    except Exception as e:
+        return {"error": str(e), "path": "/mock/path"}
 
 @router.post("/open")
 def open_folder(req: PathRequest):

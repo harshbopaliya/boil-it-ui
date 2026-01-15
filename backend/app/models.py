@@ -25,3 +25,14 @@ class TagCreate(BaseModel):
 
 class PathRequest(BaseModel):
     path: str
+
+class AIRequest(BaseModel):
+    prompt: str
+    provider: str  # "openai" or "ollama"
+    model: str
+    openai_key: Optional[str] = None
+    ollama_url: Optional[str] = "http://localhost:11434"
+
+class AIResponse(BaseModel):
+    nodes: List[Node]
+    name: str

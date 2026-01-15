@@ -9,17 +9,20 @@ import ForgeModal from './ForgeModal';
 import SuccessModal from './SuccessModal';
 import TemplateDetailModal from './TemplateDetailModal';
 import PathSelectionModal from './PathSelectionModal';
+import AIModal from './AIModal';
 import Toast, { ToastMessage } from './Toast';
 import Confirm from './Confirm';
 import { Flame, Library, Hammer } from 'lucide-react';
 
 function App() {
   const [view, setView] = useState<'builder' | 'library'>('builder');
+  const [mode, setMode] = useState<'manual' | 'ai'>('manual');
   const [projectName, setProjectName] = useState('my-project');
   const [nodes, setNodes] = useState<TreeNode[]>([]);
   const [templates, setTemplates] = useState<Template[]>([]);
   const [showForgeModal, setShowForgeModal] = useState(false);
   const [showPathModal, setShowPathModal] = useState(false);
+  const [showAIModal, setShowAIModal] = useState(false);
   const [pathModalSource, setPathModalSource] = useState<'builder' | 'template' | null>(null);
   const [pendingTemplateNodes, setPendingTemplateNodes] = useState<TreeNode[] | null>(null);
   const [boilResult, setBoilResult] = useState<BoilResult | null>(null);
@@ -49,10 +52,14 @@ function App() {
   }, [nodes]);
 
   const handleSaveTemplate = async (name: string, tags: string[]) => {
-    await api.saveTemplate(name, tags, nodes);
-    setShowForgeModal(false);
-    await loadTemplates();
-    showToast(`Template "${name}" saved successfully!`, 'success');
+    try {
+      await api.saveTemplate(name, tags, nodes);
+      setShowForgeModal(false);
+      await loadTemplates();
+      showToast(`Template "${name}" saved successfully!`, 'success');
+    } catch (error) {
+      showToast('Failed to save template', 'error');
+    }
   };
 
   const handleDeleteTemplate = async (id: string) => {
@@ -105,10 +112,26 @@ function App() {
     }
   };
 
+  const handleAIGenerated = (name: string, generatedNodes: TreeNode[]) => {
+    setProjectName(name);
+    setNodes(generatedNodes);
+    setShowAIModal(false);
+    setMode('manual');
+    showToast(`AI generated structure for "${name}"`, 'success');
+  };
+
+  const handleModeChange = (newMode: 'manual' | 'ai') => {
+    if (newMode === 'ai') {
+      setShowAIModal(true);
+    } else {
+      setMode('manual');
+    }
+  };
+
   return (
     <div className="app">
-      <TitleBar />
-      <div className="title-bar" style={{ background: '#b8b4ac', padding: '6px 12px' }}>
+      <TitleBar mode={mode} onModeChange={handleModeChange} />
+      <div className="title-bar" style={{ background: '#b8b4ac', padding: '6px 12px', borderTop: '1px solid #dfdfdf' }}>
         <div style={{ display: 'flex', gap: '8px' }}>
           <button className={`toggle-btn ${view === 'builder' ? 'active' : ''}`} onClick={() => setView('builder')}>
             <Hammer size={14} style={{ marginRight: '4px' }} /> Builder
@@ -136,15 +159,23 @@ function App() {
         )}
       </div>
       <div className="footer"><Flame size={12} className="footer-icon" /><span>Boil-it UI v1.0</span></div>
+
       {showForgeModal && <ForgeModal onClose={() => setShowForgeModal(false)} onSave={handleSaveTemplate} />}
+
+      {showAIModal && <AIModal onClose={() => setShowAIModal(false)} onGenerated={handleAIGenerated} />}
+
       {boilResult && <SuccessModal result={boilResult} onClose={() => setBoilResult(null)}
         onOpenFolder={() => api.openFolder(boilResult.outputPath)} onOpenVSCode={() => api.openInVSCode(boilResult.outputPath)}
         onUndo={() => setBoilResult(null)} />}
+
       {selectedTemplate && <TemplateDetailModal template={selectedTemplate} onClose={() => setSelectedTemplate(null)}
         onBoil={handleTemplateBoilClick}
         onForge={(template) => { setNodes(template.structure); setProjectName(template.name); setView('builder'); setSelectedTemplate(null); showToast(`Loaded "${template.name}" to builder`, 'success'); }} />}
+
       {showPathModal && <PathSelectionModal onClose={() => { setShowPathModal(false); setPendingTemplateNodes(null); setPathModalSource(null); }} onConfirm={handlePathConfirm} />}
+
       <Toast toasts={toasts} onRemove={(id) => setToasts(prev => prev.filter(t => t.id !== id))} />
+
       {confirmDelete && <Confirm message={confirmDelete.message} onConfirm={confirmDeleteTemplate} onCancel={() => setConfirmDelete(null)} />}
     </div>
   );

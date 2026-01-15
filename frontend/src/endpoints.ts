@@ -22,6 +22,9 @@ export const endpoints = {
     open: `${API_BASE_URL}/folder/open`,
     openVSCode: `${API_BASE_URL}/folder/open-vscode`,
   },
+  ai: {
+    generate: `${API_BASE_URL}/ai/generate`,
+  },
 };
 
 export const getAuthHeaders = () => {

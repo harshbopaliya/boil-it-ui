@@ -383,3 +383,34 @@ export const validateStructure = (nodes: TreeNode[]): ValidationWarning[] => {
 
   return warnings;
 };
+
+export interface AIParams {
+  prompt: string;
+  provider: 'openai' | 'ollama';
+  model: string;
+  openai_key?: string;
+  ollama_url?: string;
+}
+
+export const generateAIStructure = async (params: AIParams): Promise<{ name: string; nodes: TreeNode[] }> => {
+  if (USE_API) {
+    const response = await fetch(endpoints.ai.generate, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(params),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || 'AI generation failed');
+    }
+
+    const data = await response.json();
+    return {
+      name: data.name,
+      nodes: convertFromAPIFormat(data.nodes),
+    };
+  }
+
+  throw new Error('API must be enabled for AI features');
+};

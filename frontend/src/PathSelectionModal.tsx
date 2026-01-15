@@ -1,5 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { X, FolderOpen } from 'lucide-react';
+import * as api from './api';
 
 interface Props {
   onClose: () => void;
@@ -8,21 +9,15 @@ interface Props {
 
 export default function PathSelectionModal({ onClose, onConfirm }: Props) {
   const [path, setPath] = useState('');
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleBrowse = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      const file = files[0];
-      const fullPath = (file as any).path || file.webkitRelativePath;
-      if (fullPath) {
-        const dirPath = fullPath.substring(0, fullPath.lastIndexOf('/'));
-        setPath(dirPath || fullPath);
+  const handleBrowse = async () => {
+    try {
+      const selectedPath = await api.selectOutputFolder();
+      if (selectedPath) {
+        setPath(selectedPath);
       }
+    } catch (error) {
+      console.error('Failed to select folder:', error);
     }
   };
 
@@ -70,13 +65,6 @@ export default function PathSelectionModal({ onClose, onConfirm }: Props) {
                 Browse
               </button>
             </div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              onChange={handleFileSelect}
-              style={{ display: 'none' }}
-              {...({ webkitdirectory: '', directory: '' } as any)}
-            />
             <p style={{ fontSize: '12px', color: '#666', marginTop: '8px', lineHeight: '1.5' }}>
               Browse to select a folder or enter the full path manually. The structure will be created at this location.
             </p>

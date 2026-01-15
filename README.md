@@ -60,6 +60,25 @@ No cloud. No login. No vendor lock-in.
 
 ---
 
+## AI Scaffold Generation (Optional)
+
+You can now generate project scaffolds using AI (OpenAI or Ollama).
+
+### Configuration
+1. Navigate to the `frontend` directory.
+2. Edit the `.env` file:
+   - `VITE_OPENAI_API_KEY`: Add your OpenAI API key.
+   - `VITE_OLLAMA_MODEL`: Set your preferred Ollama model (default: `deepseek-r1:1.5b`).
+
+### Using Ollama
+If you want to use local AI, ensure [Ollama](https://ollama.com/) is running and pull the required model:
+
+```bash
+ollama pull deepseek-r1:1.5b
+```
+
+---
+
 ## Running Locally (Recommended)
 
 ### Prerequisites
@@ -139,9 +158,10 @@ will **not work inside Docker** due to container isolation.
 
 ---
 
-## Author
+## Contributors
 
-Built by **Anubhav Girdhar**
+- **Anubhav Girdhar**
+- **Harsh Bopaliya**
 
 Happy boiling 🫖
 
