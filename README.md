@@ -60,6 +60,30 @@ No cloud. No login. No vendor lock-in.
 
 ---
 
+## Setup Environment Variables
+
+Before running the application, you need to set up the environment variables for both the frontend and backend.
+
+### Frontend (`frontend/.env`)
+Create a `.env` file in the `frontend` directory with the following content:
+
+```env
+# Set to 'True' to use API endpoints instead of localStorage
+VITE_USE_API=True
+
+# API Base URL
+VITE_API_URL=http://localhost:3000/api
+
+# AI Configuration (Optional)
+VITE_OPENAI_API_KEY=your_openai_api_key_here
+VITE_OLLAMA_MODEL=deepseek-r1:1.5b
+```
+
+### Backend (`backend/.env`)
+Create a `.env` file in the `backend` directory if you need to override default settings (e.g., database path or port). Usually, defaults work fine for local development.
+
+---
+
 ## AI Scaffold Generation (Optional)
 
 You can now generate project scaffolds using AI (OpenAI or Ollama).
