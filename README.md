@@ -101,9 +101,19 @@ cd boil-it-ui
 
 ### Run Backend (FastAPI)
 
+We use [uv](https://github.com/astral-sh/uv) for fast dependency management.
+
 ```bash
-cd backend/app
-pip install -r requirements.txt
+cd backend
+uv sync
+
+# Activate environment (Windows)
+.venv\Scripts\activate
+
+# Activate environment (macOS/Linux)
+source .venv/bin/activate
+
+cd app
 uvicorn main:app --reload --port 3000
 ```
 
